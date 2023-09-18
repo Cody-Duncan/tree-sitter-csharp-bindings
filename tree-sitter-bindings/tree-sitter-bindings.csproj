@@ -23,14 +23,16 @@
 
 	<ItemGroup>
 		<_LibTreeSitterBinaries Include="$(TreeSitterDllOutputDir)\*.*" />
-		<_BindingsBinaries Include="$(BindingsDllOutputDir)\*.*" />
+		<!-- These need to be named explicitly so it doesn't succeed by copying nothing. If it fails, it will retry in a sec.-->
+		<_BindingsBinaries Include="$(BindingsDllOutputDir)tree-sitter-bindings.deps.json;$(BindingsDllOutputDir)tree-sitter-bindings.dll;$(BindingsDllOutputDir)tree-sitter-bindings.pdb" />
 	</ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	<Message Text="Copying libtree-sitter Binaries from $(TreeSitterDllOutputDir) to output directory for deployment in external projects $(FinalLibOutputDir)" Importance="high" />
 	<Copy SourceFiles="@(_LibTreeSitterBinaries)" DestinationFolder="$(FinalLibOutputDir)" />
 	<Message Text="Copying tree-sitter-bindings Binaries from $(BindingsDllOutputDir) to output directory for deployment in external projects $(FinalLibOutputDir)" Importance="high" />
-	<Copy SourceFiles="@(_BindingsBinaries)" DestinationFolder="$(FinalLibOutputDir)" />
+	<!-- Somtimes the file system lags behind, and BindingsDllOutputDir isn't visible yet, so it doesn't copy anything. Retry in 1000ms-->
+	<Copy SourceFiles="@(_BindingsBinaries)" DestinationFolder="$(FinalLibOutputDir)" RetryDelayMilliseconds="1000" />
   </Target>
 
 </Project>
