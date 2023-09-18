@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>bindings_test</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+	<TreeSitterDllOutputDir>$(SolutionDir)out\libtree-sitter\$(Platform)\$(Configuration)\</TreeSitterDllOutputDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\tree-sitter-bindings\tree-sitter-bindings.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_LibTreeSitterBinaries Include="$(TreeSitterDllOutputDir)\*.*" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Copy SourceFiles="@(MySourceFiles)" DestinationFolder="c:\MyProject\Destination" />
+	  <Message Text="Copying libtree-sitter Binaries from $(TreeSitterDllOutputDir) to bindings-test output directory $(ProjectDir)$(OutDir)" Importance="high" />
+	  <Copy SourceFiles="@(_LibTreeSitterBinaries)" DestinationFolder="$(ProjectDir)$(OutDir)" />
+  </Target>
+
+</Project>

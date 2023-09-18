@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bindings-generator", "bindings-generator\bindings-generator.csproj", "{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtree-sitter", "libtree-sitter\libtree-sitter.vcxproj", "{E1B2A222-2B35-495A-92AE-C470945C0D3D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037} = {965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bindings-test", "bindings-test\bindings-test.csproj", "{FD282D62-2129-4675-9197-1D225ECACCD1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D} = {E1B2A222-2B35-495A-92AE-C470945C0D3D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tree-sitter-bindings", "tree-sitter-bindings\tree-sitter-bindings.csproj", "{F7DE88E1-BEDD-4156-9436-1ACF2367E856}"
+	ProjectSection(ProjectDependencies) = postProject
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037} = {965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D} = {E1B2A222-2B35-495A-92AE-C470945C0D3D}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}.Debug|x64.ActiveCfg = Debug|x64
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}.Debug|x64.Build.0 = Debug|x64
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}.Release|x64.ActiveCfg = Release|x64
+		{965C6BF6-5E0E-4A96-B7CF-04BBF1BFA037}.Release|x64.Build.0 = Release|x64
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D}.Debug|x64.ActiveCfg = Debug|x64
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D}.Debug|x64.Build.0 = Debug|x64
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D}.Release|x64.ActiveCfg = Release|x64
+		{E1B2A222-2B35-495A-92AE-C470945C0D3D}.Release|x64.Build.0 = Release|x64
+		{FD282D62-2129-4675-9197-1D225ECACCD1}.Debug|x64.ActiveCfg = Debug|x64
+		{FD282D62-2129-4675-9197-1D225ECACCD1}.Debug|x64.Build.0 = Debug|x64
+		{FD282D62-2129-4675-9197-1D225ECACCD1}.Release|x64.ActiveCfg = Release|x64
+		{FD282D62-2129-4675-9197-1D225ECACCD1}.Release|x64.Build.0 = Release|x64
+		{F7DE88E1-BEDD-4156-9436-1ACF2367E856}.Debug|x64.ActiveCfg = Debug|x64
+		{F7DE88E1-BEDD-4156-9436-1ACF2367E856}.Debug|x64.Build.0 = Debug|x64
+		{F7DE88E1-BEDD-4156-9436-1ACF2367E856}.Release|x64.ActiveCfg = Release|x64
+		{F7DE88E1-BEDD-4156-9436-1ACF2367E856}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F5BFA35-C824-4EC4-9D20-40B1C93C0E25}
+	EndGlobalSection
+EndGlobal

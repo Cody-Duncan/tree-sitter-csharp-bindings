@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>bindings_generator</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x64</Platforms>
+	<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck> <!-- always run the pre-build script -->
+	<BindingOutputDir>$(SolutionDir)out</BindingOutputDir>
+	<CSharpbindingOutputDir>$(BindingOutputDir)\csharp_bindings</CSharpbindingOutputDir>
+	<CHeaderOutputDir>$(BindingOutputDir)\tree_sitter_dll_includes</CHeaderOutputDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="output_bindings\**" />
+    <EmbeddedResource Remove="output_bindings\**" />
+    <None Remove="output_bindings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CppSharp" Version="1.0.54.626" />
+  </ItemGroup>
+	
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(SolutionDir)\download_tree_sitter_repo.ps1" />
+  </Target>
+
+  <ItemGroup>
+     <_OutDirectories Include="$([System.IO.Directory]::GetDirectories($(BindingOutputDir), '*', System.IO.SearchOption.TopDirectoryOnly))" />
+  </ItemGroup>
+
+  <Target Name="RemoveGeneratedBindings" AfterTargets="Clean">
+    <!-- These are generated after running the bindings-generator. Clean them up. -->
+	<Message Text="Deleting Generated Bindings directories at @(_OutDirectories)" Importance="high" />
+    <RemoveDir Directories="@(_OutDirectories)" />
+  </Target>
+
+</Project>
