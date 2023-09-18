@@ -54,7 +54,7 @@ see `bindings-test.csproj` for an example:
   <PropertyGroup>
     ...
     <TreeSitterCsharpBindingsDir>PATH_TO_tree-sitter-csharp-bindings_HERE</TreeSitterCsharpBindingsDir>
-	<TreeSitterDllOutputDir>$(TreeSitterCsharpBindingsDir)\out\binding_libs\$(Platform)\$(Configuration)\net6.0</TreeSitterDllOutputDir>
+    <TreeSitterDllOutputDir>$(TreeSitterCsharpBindingsDir)\out\binding_libs\$(Platform)\$(Configuration)\net6.0</TreeSitterDllOutputDir>
   </PropertyGroup>
 
   ...
