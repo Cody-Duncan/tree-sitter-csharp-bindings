@@ -66,7 +66,8 @@ see `bindings-test.csproj` for an example:
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Message Text="Copying tree-sitter-csharp-bindings Binaries from $(TreeSitterDllOutputDir) to project output directory $(ProjectDir)$(OutDir)" Importance="high" />
     <Copy SourceFiles="@(_LibTreeSitterBinaries)" DestinationFolder="$(ProjectDir)$(OutDir)" />
-</Target>
+  </Target> 
+</Project>
 ```
 
 ### Libraries
