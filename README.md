@@ -1,12 +1,11 @@
 # tree-sitter-bindings
 
-Generates C# Bindings for [Tree-Sitter](https://github.com/tree-sitter/tree-sitter).
-
+Generates C# Bindings for [Tree-Sitter](https://github.com/tree-sitter/tree-sitter).  
 This uses the nuget package for [CppSharp](https://github.com/mono/CppSharp) to generate C# bindings.
 
-Builds a native dll, `tree_sitter.dll`, containing [Tree-Sitter's](https://github.com/tree-sitter/tree-sitter) C library code.
-
-Builds a .NET managed dll, `tree-sitter-bindings.dll`, that exposes the C# API bindings and wraps all the pInvokes to call into the native library`tree_sitter.dll`.
+- `tree_sitter.dll` - native C++ Windows DLL. Contains [Tree-Sitter's](https://github.com/tree-sitter/tree-sitter) C library code.
+- `tree-sitter-bindings.dll` - .NET managed C# DLL. Exposes the C# API bindings.
+- ***$TODO*** generate `tree-sitter-<language>.dll` and `tree-sitter-<language>-bindings.dll` - Libraries that wrap a target language's grammar and parser. E.G. [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) and [tree-sitter-c-sharp](https://github.com/tree-sitter/tree-sitter-c-sharp).
 
 ## Prerequisites
 
@@ -26,12 +25,12 @@ Builds a .NET managed dll, `tree-sitter-bindings.dll`, that exposes the C# API b
 
 Into `./out/binding_libs`
 
-`tree-sitter-bindings.dll`
+`tree-sitter-bindings.dll` - .NET managed C# DLL. Exposes the C# API bindings and wraps all the pInvokes to call into the native library`tree_sitter.dll`. 
 - tree-sitter-bindings.deps.json
 - tree-sitter-bindings.dll
 - tree-sitter-bindings.pdb
 
-`tree_sitter.dll`
+`tree_sitter.dll` - native C++ DLL. Contains [Tree-Sitter's](https://github.com/tree-sitter/tree-sitter) C library code.
 - tree_sitter.dll
 - tree_sitter.exp
 - tree_sitter.lib
