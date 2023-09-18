@@ -1,0 +1,2 @@
+This file exists to make sure the out/ directory exists.
+@see lib-tree-sitter bindings for notes on why.
