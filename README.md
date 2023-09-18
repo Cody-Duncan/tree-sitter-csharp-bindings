@@ -1,4 +1,4 @@
-# tree-sitter-bindings
+# tree-sitter-csharp-bindings
 
 Generates C# Bindings for [Tree-Sitter](https://github.com/tree-sitter/tree-sitter).  
 This uses the nuget package for [CppSharp](https://github.com/mono/CppSharp) to generate C# bindings.
