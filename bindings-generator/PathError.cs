@@ -31,6 +31,11 @@ namespace bindings_generator
             HeadersNotFound,
 
             /// <summary>
+            /// Could not find any source files. Check AdditionalInfo for source path.
+            /// </summary>
+            SourceFilesNotFound,
+
+            /// <summary>
             /// Could not find any library files. Check AdditionalInfo for library path.
             /// </summary>
             LibrariesNotFound,
@@ -74,6 +79,15 @@ namespace bindings_generator
             outError.m_additionalInfo = includePath;
             return outError;
         }
+
+        public static PathError SourceFilesNotFound(string sourcePath)
+        {
+            var outError = new PathError();
+            outError.m_type = PathErrorType.SourceFilesNotFound;
+            outError.m_additionalInfo = sourcePath;
+            return outError;
+        }
+
         public static PathError LibrariesNotFound(string libraryPath)
         {
             var outError = new PathError();

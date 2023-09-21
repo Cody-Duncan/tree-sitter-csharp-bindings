@@ -11,43 +11,43 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\tree-sitter\lib\src\alloc.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\get_changed_ranges.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\language.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\lexer.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\node.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\parser.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\query.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\stack.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\subtree.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\tree.c" />
-    <ClCompile Include="..\tree-sitter\lib\src\tree_cursor.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\alloc.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\get_changed_ranges.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\language.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\lexer.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\node.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\parser.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\query.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\stack.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\subtree.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\tree.c" />
+    <ClCompile Include="..\downloads\tree-sitter\lib\src\tree_cursor.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\tree-sitter\lib\src\alloc.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\array.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\atomic.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\clock.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\error_costs.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\get_changed_ranges.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\host.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\language.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\length.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\lexer.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\point.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\reduce_action.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\reusable_node.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\stack.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\subtree.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\tree.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\tree_cursor.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\ptypes.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\umachine.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\urename.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\utf.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\utf16.h" />
-    <ClInclude Include="..\tree-sitter\lib\src\unicode\utf8.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\alloc.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\array.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\atomic.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\clock.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\error_costs.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\get_changed_ranges.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\host.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\language.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\length.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\lexer.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\point.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\reduce_action.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\reusable_node.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\stack.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\subtree.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\tree.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\tree_cursor.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\ptypes.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\umachine.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\urename.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\utf.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\utf16.h" />
+    <ClInclude Include="..\downloads\tree-sitter\lib\src\unicode\utf8.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -117,7 +117,7 @@
       <EnableUAC>false</EnableUAC>
     </Link>
     <PreBuildEvent>
-      <Command>$(SolutionDir)bindings-generator\bin\$(Platform)\$(Configuration)\net6.0\bindings-generator.exe $(SolutionDir)tree-sitter $(SolutionDir)out</Command>
+      <Command>$(SolutionDir)bindings-generator\bin\$(Platform)\$(Configuration)\net6.0\bindings-generator.exe --TreeSitterReposPath $(SolutionDir)downloads --OutputPath $(SolutionDir)out</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,7 +144,7 @@
       <EnableUAC>false</EnableUAC>
     </Link>
     <PreBuildEvent>
-      <Command>$(SolutionDir)bindings-generator\bin\$(Platform)\$(Configuration)\net6.0\bindings-generator.exe $(SolutionDir)tree-sitter $(SolutionDir)out</Command>
+      <Command>$(SolutionDir)bindings-generator\bin\$(Platform)\$(Configuration)\net6.0\bindings-generator.exe --TreeSitterReposPath $(SolutionDir)downloads --OutputPath $(SolutionDir)out</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

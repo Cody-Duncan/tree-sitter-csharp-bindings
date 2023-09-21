@@ -12,9 +12,9 @@ namespace bindings_generator
 {
     internal class CsharpBindingsGenerator : ILibrary
     {
-        TreeSitterPaths m_paths;
+        CCompilerPaths m_paths;
         string m_outputDir = "";
-        public CsharpBindingsGenerator(TreeSitterPaths argPaths, string outputDir)
+        public CsharpBindingsGenerator(CCompilerPaths argPaths, string outputDir)
         {
             Debug.Assert(argPaths.IsOk);
             m_paths = argPaths;
