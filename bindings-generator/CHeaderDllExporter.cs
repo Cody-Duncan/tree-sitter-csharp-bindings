@@ -41,9 +41,9 @@ namespace bindings_generator
                 //     ts_[\w]+                 The function name. E.G. `ts_language_field_count`
                 //     \(                       The start parenthesis for the function. Always present.
                 //     (.*\);)?                 The rest of the function arguments and semi-colon. This is optionally present. E.G. `const TSLanguage *, TSSymbol);`
-                // $                            End of Line
+                // \r?$                         End of Line, that optionally has \r\n
 
-                Regex functionLineRegex = new Regex(@"^(([\w]+ )+\*?(ts_[\w]+\((.*\);)?))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex functionLineRegex = new Regex(@"^(([\w]+ )+\*?(ts_[\w]+\((.*\);)?))\r?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 string outFileContents = functionLineRegex.Replace(intermediateFileContents, new MatchEvaluator(AddDllExporeToFunctionLine));
 
                 File.WriteAllText(includeFilepath, outFileContents);
