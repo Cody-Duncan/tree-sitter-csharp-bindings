@@ -24,7 +24,7 @@
   </ItemGroup>
 	
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(SolutionDir)clone_git_repo.ps1 -GitRepoAddress https://github.com/tree-sitter/tree-sitter.git -VersionTag v0.20.8 -OutputDir $(SolutionDir)downloads -CreateSubDir" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(SolutionDir)clone_all_language_repos.ps1 -LanguageConfigFile $(SolutionDir)language_repos.txt -OutputDir $(SolutionDir)downloads" />
   </Target>
 
   <ItemGroup>

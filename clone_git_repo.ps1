@@ -69,10 +69,16 @@ if (Test-Path -Path $OutputDir)
 
 if (-not(Test-Path -Path $OutputDir))
 {
-    Write-Output "${scriptName}: CLONING: Cloning $repoName repostiory from $GitRepoAddress into $OutputDir"
+    Write-Output "${scriptName}: CLONING: Cloning $repoName repository from $GitRepoAddress into $OutputDir"
     
+    $branchArg = ""
+    if (-not [string]::IsNullOrEmpty($VersionTag))
+    {
+        $branchArg = "-b $VersionTag"
+    }
+
     # clone the repository
-    $gitCommand= "git -c advice.detachedHead=false clone -b $VersionTag --depth 1 $GitRepoAddress $OutputDir"
+    $gitCommand= "git -c advice.detachedHead=false clone $branchArg --depth 1 $GitRepoAddress $OutputDir"
     Write-Output "${scriptName}: Executing ``$gitCommand``"
     Invoke-Expression $gitCommand 
 
@@ -88,3 +94,4 @@ if (-not(Test-Path -Path $OutputDir))
 }
 
 Write-Output "${scriptName}: FINISHED"
+exit 0
