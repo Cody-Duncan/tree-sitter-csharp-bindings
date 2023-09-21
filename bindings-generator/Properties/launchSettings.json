@@ -2,7 +2,7 @@
   "profiles": {
     "bindings-generator": {
       "commandName": "Project",
-      "commandLineArgs": "..\\tree-sitter $(SolutionDir)\\out",
+      "commandLineArgs": "..\\downloads\\tree-sitter $(SolutionDir)\\out",
       "workingDirectory": "$(ProjectDir)"
     }
   }

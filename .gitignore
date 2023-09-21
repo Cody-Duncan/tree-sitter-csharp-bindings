@@ -3,6 +3,9 @@
 out/
 !out/hold.txt
 
+## Directory for downloaded repositories, e.g. tree-sitter and tree-sitter-python
+downloads/
+
 ## A download of the tree-sitter repository. Just need this for a few files. Doesn't need tracking.
 tree-sitter/
 
