@@ -341,10 +341,7 @@ namespace bindings_generator
 
             // GENERATE BINDINGS!
             {
-                var headerDirectory = Path.GetDirectoryName(headerOutputPath);
-                CCompilerPaths languageHeaderPaths = CCompilerPaths.FromLanguageHeaderPath(new DirectoryInfo(headerDirectory));
-                var bindingGenerator = new CsharpBindingsGenerator(languageHeaderPaths, outputPaths.cSharpBindingsOutputPath.FullName);
-                ConsoleDriver.Run(bindingGenerator);
+                GenerateLanguageCSharpBinding.Generate(paths.ModuleName, outputPaths.cSharpBindingsOutputPath.FullName);
             }
 
             Console.WriteLine($"SUCCESS: Finished generating bindings for {languageRepoPath.Name}");
