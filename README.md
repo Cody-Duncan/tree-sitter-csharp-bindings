@@ -4,8 +4,9 @@ Generates C# Bindings for [Tree-Sitter](https://github.com/tree-sitter/tree-sitt
 This uses the nuget package for [CppSharp](https://github.com/mono/CppSharp) to generate C# bindings.
 
 - `tree_sitter.dll` - native C++ Windows DLL. Contains [Tree-Sitter's](https://github.com/tree-sitter/tree-sitter) C library code.
-- `tree-sitter-bindings.dll` - .NET managed C# DLL. Exposes the C# API bindings.
-- ***$TODO*** generate `tree-sitter-<language>.dll` and `tree-sitter-<language>-bindings.dll` - Libraries that wrap a target language's grammar and parser. E.G. [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) and [tree-sitter-c-sharp](https://github.com/tree-sitter/tree-sitter-c-sharp).
+- `TreeSitterBindings.dll` - .NET managed C# DLL. Exposes the C# API bindings.
+- ***$TODO*** GENERATE `tree-sitter-<language>.dll` and `tree-sitter-<language>-bindings.dll` - Libraries that wrap a target language's grammar and parser. E.G. [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) and [tree-sitter-c-sharp](https://github.com/tree-sitter/tree-sitter-c-sharp).
+Right now, the `tree_sitter_python` project is static. The C# file generated for it returns `tree_sitter_python.TSLanguage`; the type needs to be changed to `tree_sitter.TSLanguage`.
 
 ## Prerequisites
 

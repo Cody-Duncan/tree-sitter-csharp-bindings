@@ -13,10 +13,10 @@
   </PropertyGroup>
 
   <!--These linked files should copy into the output directory when building.-->
-  <ItemGroup>
-	  <Content Include="$(G_FinalBindingsOutputDir)\tree_sitter.dll" Link="tree_sitter.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+  <!--<ItemGroup>
+	<Content Include="$(G_FinalBindingsOutputDir)tree_sitter.dll" Link="tree_sitter.dll" >
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
     <Content Include="$(G_FinalBindingsOutputDir)tree_sitter.exp" Link="tree_sitter.exp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -26,6 +26,11 @@
     <Content Include="$(G_FinalBindingsOutputDir)tree_sitter.pdb" Link="tree_sitter.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>-->
+
+  <ItemGroup>
+	  <_LibTreeSitterBinaries Include="$(G_FinalBindingsOutputDir)\**\*.*" />
+	  <Content Include="$(G_FinalBindingsOutputDir)**\*.*" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)tree-sitter-bindings\TreeSitterBindings.csproj" />
@@ -42,3 +47,4 @@
 </Target>-->
 
 </Project>
+ 

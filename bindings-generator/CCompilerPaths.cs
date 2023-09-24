@@ -116,8 +116,35 @@ namespace bindings_generator
 
             return paths;
         }
+        public static CCompilerPaths FromLanguageHeaderPath(DirectoryInfo languageHeaderPath)
+        {
+            if (!Directory.Exists(languageHeaderPath.FullName))
+            {
+                return CCompilerPaths.FromPathError(PathError.DirectoryMissing(languageHeaderPath.FullName));
+            }
 
-        public string GenerateErrorMessage()
+            var headerFiles = Directory
+                .EnumerateFiles(languageHeaderPath.FullName, "*.*", SearchOption.AllDirectories)
+                .Where(s => FileExtensions.cHeaderExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                .ToList();
+
+            if (!headerFiles.Any())
+            {
+                return CCompilerPaths.FromPathError(PathError.HeadersNotFound(languageHeaderPath.FullName));
+            }
+
+            CCompilerPaths paths = new CCompilerPaths();
+            paths.m_moduleName = languageHeaderPath.Name.Replace('-', '_'); // can't have '-' in module name
+            paths.m_pathError = PathError.Ok();
+            paths.m_repoPath = languageHeaderPath.FullName;
+            paths.m_includePath = languageHeaderPath.FullName;
+            paths.m_headerFiles = headerFiles;
+
+            return paths;
+        }
+
+
+            public string GenerateErrorMessage()
         {
             string outError = "<UNKNOWN>";
 

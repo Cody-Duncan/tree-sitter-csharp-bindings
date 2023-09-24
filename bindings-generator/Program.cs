@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.Text;
 using System.Text.RegularExpressions;
+using static bindings_generator.Program;
 
 namespace bindings_generator
 {
@@ -206,6 +207,79 @@ namespace bindings_generator
             return MainResult.Ok;
         }
 
+        static (MainResult, string? HeaderOutputPath) GenerateHeaderForLanguage(LanguageSourcePaths languagePaths, OutputPaths outputPaths)
+        {
+            const string parserFileName = "parser.c";
+            string? parserFile = Directory
+                .EnumerateFiles(languagePaths.SourcePath, "*.c", SearchOption.TopDirectoryOnly)
+                .Where(s => Path.GetFileName(s).Equals(parserFileName)).FirstOrDefault();
+
+            if (parserFile == null)
+            {
+                Console.WriteLine($"ERROR: could not find {parserFileName} in repo source path:\n{languagePaths.SourcePath}");
+                return (MainResult.ParserFileNotFound, null);
+            }
+
+            const string headerStartMarker = "#ifdef __cplusplus";
+            var parserText = File.ReadAllText(parserFile).ToString();
+
+            int headerStartIndex = parserText.IndexOf(headerStartMarker);
+            string headerCoreText = parserText.Substring(headerStartIndex);
+
+            string expectedLanguageFuncName = $"tree_sitter{languagePaths.ModuleName}()";
+
+            Regex languageFuncStartRx = new Regex(@"extern const TSLanguage \*tree_sitter_(\w+)\(void\)");
+            Match languageFuncStartMatch = languageFuncStartRx.Match(headerCoreText);
+            if (!languageFuncStartMatch.Success)
+            {
+                Console.WriteLine($"ERROR: could not find {expectedLanguageFuncName} function in parser file:\n{parserFile}");
+                return (MainResult.LanguageFunctionNotFound, null);
+            }
+
+            Regex languageFuncEndRx = new Regex(@"return &language;\r?\n}");
+            Match languageFuncEndMatch = languageFuncEndRx.Match(headerCoreText);
+            if (!languageFuncEndMatch.Success)
+            {
+                Console.WriteLine($"ERROR: could not find the end of {expectedLanguageFuncName} function in parser file:\n{parserFile}");
+                return (MainResult.LanguageFunctionNotFound, null);
+            }
+
+            // Snip out the entire language function
+            int languageFuncStart = languageFuncStartMatch.Index;
+            int languageFuncEnd = (languageFuncEndMatch.Index + languageFuncEndMatch.Length); // make sure to capture the 'return &language;\r\n}' at the end
+            int languageFuncLength = languageFuncEnd - languageFuncStart;
+            var headerCoreTextSnipped = headerCoreText.Remove(languageFuncStart, languageFuncLength);
+
+            // put the language function declaration back in: 'extern const TSLanguage *tree_sitter_SOMETHING(void)' + ;'
+            char firstNewlineChar = headerCoreTextSnipped.First(c => c == '\r' || c == '\n');
+            string newLine = (firstNewlineChar == '\r') ? "\r\n" : "\n";
+            var headerCoreTextWithLanguageFunction = headerCoreTextSnipped.Insert(languageFuncStartMatch.Index, languageFuncStartMatch.Value + ";" + newLine);
+
+            // add a couple of forward declarations for parameter types, so it can be succesfully parsed
+            const string TSLexerDeclaration = "typedef struct TSLexer TSLexer;";
+            const string TSLanguageDeclaration = "typedef struct TSLanguage TSLanguage;";
+            string relativeSourcePath = Path.GetRelativePath(languagePaths.RepoPath, parserFile);
+            string sourceString = $"//Generated from {languagePaths.SourcePath}".Replace('\\', '/');
+            var headerCoreTextFinal = headerCoreTextWithLanguageFunction.Insert(0, $"{sourceString}{newLine}{newLine}{TSLexerDeclaration}{newLine}{TSLanguageDeclaration}{newLine}{newLine}");
+
+            // write out the parser header
+            string HeaderOutputDir = Path.Join(outputPaths.fixedCIncludesOutputPath.FullName, languagePaths.ModuleName);
+            string OutputFilepath = Path.Join(HeaderOutputDir, $"{languagePaths.ModuleName}.h");
+
+            // Create OutputSubdirectory_FixedCIncludes
+            System.IO.Directory.CreateDirectory(HeaderOutputDir);
+            if (!Directory.Exists(HeaderOutputDir))
+            {
+                Console.WriteLine($"ERROR: Failed to create output directory for generate parser include headers at path: {HeaderOutputDir}");
+                return (MainResult.FailedToCreate_OutputSubdirectory_FixedCIncludes, null);
+            }
+
+            Console.WriteLine($"Generating parser header for {languagePaths.ModuleName} to {OutputFilepath}");
+            File.WriteAllText(OutputFilepath, headerCoreTextFinal, Encoding.UTF8);
+
+            return (MainResult.Ok, OutputFilepath);
+        }
+
         static MainResult GenerateLanguageBindings(DirectoryInfo languageRepoPath, OutputPaths outputPaths)
         {
             Console.WriteLine($"START: Generating bindings for Language repo {languageRepoPath.Name}");
@@ -259,113 +333,19 @@ namespace bindings_generator
             // ```
             //
             // Need to snip this portion out, and turn it into a header to generate bindings off of.
-
-            // Generate header file
+            (MainResult generateHeaderResult, string headerOutputPath) = GenerateHeaderForLanguage(paths, outputPaths);
+            if (generateHeaderResult != MainResult.Ok || headerOutputPath == null)
             {
-
-                const string parserFileName = "parser.c";
-                string? parserFile = Directory
-                    .EnumerateFiles(paths.SourcePath, "*.c", SearchOption.TopDirectoryOnly)
-                    .Where(s => Path.GetFileName(s).Equals(parserFileName)).FirstOrDefault();
-
-                if (parserFile == null)
-                {
-                    Console.WriteLine($"ERROR: could not find {parserFileName} in repo source path:\n{paths.SourcePath}");
-                    return MainResult.ParserFileNotFound;
-                }
-
-                const string headerStartMarker = "#ifdef __cplusplus";
-                var parserText = File.ReadAllText(parserFile).ToString();
-
-                int headerStartIndex = parserText.IndexOf(headerStartMarker);
-                string headerCoreText = parserText.Substring(headerStartIndex);
-
-                string expectedLanguageFuncName = $"tree_sitter{paths.ModuleName}()";
-
-                Regex languageFuncStartRx = new Regex(@"extern const TSLanguage \*tree_sitter_(\w+)\(void\)");
-                Match languageFuncStartMatch = languageFuncStartRx.Match(headerCoreText);
-                if (!languageFuncStartMatch.Success)
-                {
-                    Console.WriteLine($"ERROR: could not find {expectedLanguageFuncName} function in parser file:\n{parserFile}");
-                    return MainResult.LanguageFunctionNotFound;
-                }
-
-                Regex languageFuncEndRx = new Regex(@"return &language;\r?\n}");
-                Match languageFuncEndMatch = languageFuncEndRx.Match(headerCoreText);
-                if (!languageFuncEndMatch.Success)
-                {
-                    Console.WriteLine($"ERROR: could not find the end of {expectedLanguageFuncName} function in parser file:\n{parserFile}");
-                    return MainResult.LanguageFunctionNotFound;
-                }
-
-                // Snip out the entire language function
-                int languageFuncStart = languageFuncStartMatch.Index;
-                int languageFuncEnd = (languageFuncEndMatch.Index + languageFuncEndMatch.Length); // make sure to capture the 'return &language;\r\n}' at the end
-                int languageFuncLength = languageFuncEnd - languageFuncStart;
-                var headerCoreTextSnipped = headerCoreText.Remove(languageFuncStart, languageFuncLength);
-
-                // put the language function declaration back in: 'extern const TSLanguage *tree_sitter_SOMETHING(void)' + ;'
-                char firstNewlineChar = headerCoreTextSnipped.First(c => c == '\r' || c == '\n');
-                string newLine = (firstNewlineChar == '\r') ? "\r\n" : "\n";
-                var headerCoreTextWithLanguageFunction = headerCoreTextSnipped.Insert(languageFuncStartMatch.Index, languageFuncStartMatch.Value + ";" + newLine);
-                
-                // add a couple of forward declarations for parameter types, so it can be succesfully parsed
-                const string TSLexerDeclaration = "typedef struct TSLexer TSLexer;";
-                const string TSLanguageDeclaration = "typedef struct TSLanguage TSLanguage;";
-                string relativeSourcePath = Path.GetRelativePath(paths.RepoPath, parserFile);
-                string sourceString = $"//Generated from {languageRepoPath.Name}/{relativeSourcePath}".Replace('\\', '/');
-                var headerCoreTextFinal = headerCoreTextWithLanguageFunction.Insert(0, $"{sourceString}{newLine}{newLine}{TSLexerDeclaration}{newLine}{TSLanguageDeclaration}{newLine}{newLine}");
-
-                // write out the parser header
-                {
-                    string languageCModuleName = languageRepoPath.Name.Replace('-', '_');
-
-                    string generatedLanguageParserIncludesModuleDir = Path.Join(outputPaths.fixedCIncludesOutputPath.FullName, languageCModuleName);
-
-                    // Create OutputSubdirectory_FixedCIncludes
-                    System.IO.Directory.CreateDirectory(generatedLanguageParserIncludesModuleDir);
-                    if (!Directory.Exists(generatedLanguageParserIncludesModuleDir))
-                    {
-                        Console.WriteLine($"ERROR: Failed to create output directory for generate parser include headers at path: {generatedLanguageParserIncludesModuleDir}");
-                        return MainResult.FailedToCreate_OutputSubdirectory_FixedCIncludes;
-                    }
-
-                    string generatedLanguageParserHeaderName = $"{languageCModuleName}.h";
-                    string generatedLanguageParserHeaderPath= Path.Join(generatedLanguageParserIncludesModuleDir, generatedLanguageParserHeaderName);
-
-                    Console.WriteLine($"Generating parser header for {languageRepoPath.Name} to {generatedLanguageParserHeaderPath}");
-
-                    File.WriteAllText(generatedLanguageParserHeaderPath, headerCoreTextFinal,Encoding.UTF8);
-                }
+                return generateHeaderResult;
             }
 
             // GENERATE BINDINGS!
-            //{
-            //    string bindingsPath = Path.Join(outputPath.FullName, OutputSubdirectory_CSharpBindings);
-            //    ConsoleDriver.Run(new CsharpBindingsGenerator(paths, bindingsPath));
-
-            //    // Fix the CSharp Bindings because there's a missing explicit cast that causes compilation error
-            //    if (!Directory.Exists(bindingsPath))
-            //    {
-            //        Console.WriteLine($"ERROR: Failed to generate bindings into: \n{bindingsPath}");
-            //        return MainResult.BindingGenerationError;
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine($"Generated Bindings may be found in:\n{outputPath.FullName}");
-            //    }
-
-            //    {
-            //        var outputCSharpFiles = Directory
-            //            .EnumerateFiles(bindingsPath, "*.*", SearchOption.AllDirectories)
-            //            .Where(s => csharpExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
-            //            .ToList();
-            //        var outputFileNames = String.Join(',', outputCSharpFiles.Select(filepath => Path.GetFileName(filepath)));
-            //        Console.WriteLine($"Manually fixing a generation error on C# Bindings in:\n{outputFileNames} -> {bindingsPath}");
-
-            //        CSharpBindingsFix.FixImplictCast(outputCSharpFiles);
-            //    }
-            //}
+            {
+                var headerDirectory = Path.GetDirectoryName(headerOutputPath);
+                CCompilerPaths languageHeaderPaths = CCompilerPaths.FromLanguageHeaderPath(new DirectoryInfo(headerDirectory));
+                var bindingGenerator = new CsharpBindingsGenerator(languageHeaderPaths, outputPaths.cSharpBindingsOutputPath.FullName);
+                ConsoleDriver.Run(bindingGenerator);
+            }
 
             Console.WriteLine($"SUCCESS: Finished generating bindings for {languageRepoPath.Name}");
             return MainResult.Ok;

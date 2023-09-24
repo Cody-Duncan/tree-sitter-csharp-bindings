@@ -56,7 +56,7 @@ namespace bindings_generator
             options.GeneratorKind = GeneratorKind.CSharp;
 
             // Module, i.e. the namespace to use for the module
-            var module = options.AddModule("tree_sitter");
+            var module = options.AddModule(m_paths.ModuleName);
 
             // Includes and Libraries
             module.IncludeDirs.Add(m_paths.IncludePath);
