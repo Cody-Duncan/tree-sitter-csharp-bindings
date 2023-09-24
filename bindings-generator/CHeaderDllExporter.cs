@@ -9,10 +9,13 @@ namespace bindings_generator
 {
     internal class CHeaderDllExporter
     {
+        const string EnableDllExportDefine = "EXPORT_TREE_SITTER_API";
+        const string DisableDllExportDefine = "DO_NOT_EXPORT_TREE_SITTER_API";
+        const string DllExportDefine = "TreeSitterDllExport";
         internal static string AddDllExporeToFunctionLine(Match m)
         {
             var functionLine = m.Groups.Values.First().Value;
-            return "DllExport " + functionLine;
+            return $"{DllExportDefine} " + functionLine;
         }
 
         internal static void AddDllExportToCAPI(IEnumerable<string> C_HeaderFiles)
@@ -29,7 +32,7 @@ namespace bindings_generator
                 Match includeMatch = includeRx.Match(inFileContents);
                 string intermediateFileContents =
                     includeMatch.Success
-                    ? inFileContents.Insert(includeMatch.Index, $"#define DllExport   __declspec( dllexport ){newLine}")
+                    ? inFileContents.Insert(includeMatch.Index, $"#if defined(EXPORT_TREE_SITTER_API) && !defined(DO_NOT_EXPORT_TREE_SITTER_API){newLine}\t#define {DllExportDefine}   __declspec( dllexport ){newLine}#else{newLine}\t#define {DllExportDefine}{newLine}#endif{newLine}{newLine}")
                     : inFileContents;
 
                 // const char *ts_language_field_name_for_id(const TSLanguage *, TSFieldId);

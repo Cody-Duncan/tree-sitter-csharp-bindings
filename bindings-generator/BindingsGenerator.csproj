@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+<Import Project="$(SolutionDir)Build.targets" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,9 +10,6 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
 	<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck> <!-- always run the pre-build script -->
-	<BindingOutputDir>$(SolutionDir)out</BindingOutputDir>
-	<CSharpbindingOutputDir>$(BindingOutputDir)\csharp_bindings</CSharpbindingOutputDir>
-	<CHeaderOutputDir>$(BindingOutputDir)\tree_sitter_dll_includes</CHeaderOutputDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,14 +27,12 @@
     <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(SolutionDir)clone_all_language_repos.ps1 -LanguageConfigFile $(SolutionDir)language_repos.txt -OutputDir $(SolutionDir)downloads" />
   </Target>
 
-  <ItemGroup>
-     <_OutDirectories Include="$([System.IO.Directory]::GetDirectories($(BindingOutputDir), '*', System.IO.SearchOption.TopDirectoryOnly))" />
-  </ItemGroup>
-
-  <Target Name="RemoveGeneratedBindings" AfterTargets="Clean">
+  <Target Name="CleanGeneratedBindingsAndBinaries" AfterTargets="Clean">
+	  <ItemGroup>
+		  <_OutDirectories Include="$([System.IO.Directory]::GetDirectories($(G_OutputDir), '*', System.IO.SearchOption.TopDirectoryOnly))" />
+	  </ItemGroup>
     <!-- These are generated after running the bindings-generator. Clean them up. -->
-	<Message Text="Deleting Generated Bindings directories at @(_OutDirectories)" Importance="high" />
+	<Message Text="Deleting Generated Bindings and Binaries directories at $(G_OutputDir)" Importance="high" />
     <RemoveDir Directories="@(_OutDirectories)" />
   </Target>
-
 </Project>

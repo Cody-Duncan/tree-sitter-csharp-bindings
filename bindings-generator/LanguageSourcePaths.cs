@@ -8,8 +8,6 @@ namespace bindings_generator
 {
     internal class LanguageSourcePaths
     {
-        public static readonly string[] cSourceExt = { "c", "cc" };
-
         string m_moduleName = "";
         string m_repoPath = "";
         string m_sourcePath = "";
@@ -42,7 +40,7 @@ namespace bindings_generator
             // Need to generate them from the source files.
             var sourceFiles = Directory
                 .EnumerateFiles(treeSitterIncludePath, "*.*", SearchOption.TopDirectoryOnly) // want only the parser.c and scanner.c, skip tree_sitter/
-                .Where(s => cSourceExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                .Where(s => FileExtensions.cSourceExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
                 .ToList();
 
             if (!sourceFiles.Any())

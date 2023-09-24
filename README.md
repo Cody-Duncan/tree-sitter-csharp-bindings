@@ -23,7 +23,7 @@ This uses the nuget package for [CppSharp](https://github.com/mono/CppSharp) to 
 
 ## Outputs
 
-Into `./out/binding_libs`
+Into `./out/tree_sitter_csharp_bindings_libs`
 
 `tree-sitter-bindings.dll` - .NET managed C# DLL. Exposes the C# API bindings and wraps all the pInvokes to call into the native library`tree_sitter.dll`. 
 - tree-sitter-bindings.deps.json

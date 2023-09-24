@@ -1,14 +1,7 @@
 ﻿using CppSharp;
-using System;
-using System.Collections.Generic;
 using System.CommandLine;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace bindings_generator
 {
@@ -28,20 +21,6 @@ namespace bindings_generator
 
     class Program
     {
-        // This specifies a subdirectory under the outputPath to put the generated csharp bindings.
-        // E.G. CLI argument outputPath = "C:\tree-sitter-csharp-bindings\out"
-        //      bindingsOutputSubdirectory = "csharp_bindings";
-        //      Then the csharp bindings will be placed into  "C:\tree-sitter-csharp-bindings\out\csharp_bindings"
-        const string OutputSubdirectory_CSharpBindings = "csharp_bindings";
-
-        // This specifies a subdirectory under the outputPath to put the fixed C library include headers.
-        // E.G. CLI argument outputPath = "C:\tree-sitter-csharp-bindings\out"
-        //      fixedIncludesOutputSubdirectory = "tree_sitter_dll_includes";
-        //      Then the fixed C library include headers will be placed into "C:\tree-sitter-csharp-bindings\out\tree_sitter_dll_includes"
-        const string OutputSubdirectory_FixedCIncludes = "tree_sitter_dll_includes";
-
-        public static readonly string[] csharpExt = { "cs" };
-
         enum MainResult : int
         {
             Ok = 0,
@@ -55,6 +34,38 @@ namespace bindings_generator
             AnyLanguageRepoNotFound = 8,
             ParserFileNotFound = 9,
             LanguageFunctionNotFound = 10,
+        }
+
+        internal class InputPaths
+        {
+            public InputPaths(DirectoryInfo reposPath) 
+            {
+                this.reposPath = reposPath;
+            }
+
+            public DirectoryInfo reposPath { get; init; }
+        }
+
+        internal class OutputPaths
+        {
+            public OutputPaths(DirectoryInfo cSharpBindingsOutputPath, DirectoryInfo fixedCIncludesOutputPath)
+            {
+                this.cSharpBindingsOutputPath = cSharpBindingsOutputPath;
+                this.fixedCIncludesOutputPath = fixedCIncludesOutputPath;
+            }
+
+            // This specifies a subdirectory under the outputPath to put the generated csharp bindings.
+            //
+            // E.G. CLI argument outputPath = "C:\tree-sitter-csharp-bindings\out"
+            //      bindingsOutputSubdirectory = "generated_csharp_bindings_source";
+            //      Then the csharp bindings will be placed into  "C:\tree-sitter-csharp-bindings\out\generated_csharp_bindings_source"
+            public DirectoryInfo cSharpBindingsOutputPath { get; init; }
+
+            // This specifies a subdirectory under the outputPath to put the fixed C library include headers.
+            // E.G. CLI argument outputPath = "C:\tree-sitter-csharp-bindings\out"
+            //      fixedIncludesOutputSubdirectory = "generated_c_dll_headers";
+            //      Then the fixed C library include headers will be placed into "C:\tree-sitter-csharp-bindings\out\generated_c_dll_headers"
+            public DirectoryInfo fixedCIncludesOutputPath { get; init; }
         }
 
         static (ArgumentsResult, Arguments?) getCommandLineArguments(string[] args)
@@ -109,7 +120,7 @@ namespace bindings_generator
             return (ArgumentsResult.Ok, new Arguments() { outputPath = outputPath, treeSitterRepoPath = treeSitterRepoPath });
         }
 
-        static MainResult GenerateTreeSitterBindings(DirectoryInfo treeSitterRepoPath, DirectoryInfo outputPath)
+        static MainResult GenerateTreeSitterBindings(DirectoryInfo treeSitterRepoPath, OutputPaths outputPaths)
         {
             Console.WriteLine($"START: Generating language bindings for {treeSitterRepoPath.Name}");
 
@@ -124,27 +135,26 @@ namespace bindings_generator
 
             // GENERATE BINDINGS!
             {
-                string bindingsPath = Path.Join(outputPath.FullName, OutputSubdirectory_CSharpBindings);
-                ConsoleDriver.Run(new CsharpBindingsGenerator(paths, bindingsPath));
+                ConsoleDriver.Run(new CsharpBindingsGenerator(paths, outputPaths.cSharpBindingsOutputPath.FullName));
 
                 // Fix the CSharp Bindings because there's a missing explicit cast that causes compilation error
-                if (!Directory.Exists(bindingsPath))
+                if (!Directory.Exists(outputPaths.cSharpBindingsOutputPath.FullName))
                 {
-                    Console.WriteLine($"ERROR: Failed to generate bindings into: \n{bindingsPath}");
+                    Console.WriteLine($"ERROR: Failed to generate bindings into: \n{outputPaths.cSharpBindingsOutputPath.FullName}");
                     return MainResult.BindingGenerationError;
                 }
                 else
                 {
-                    Console.WriteLine($"Generated Bindings may be found in:\n{outputPath.FullName}");
+                    Console.WriteLine($"Generated Bindings may be found in:\n{outputPaths.cSharpBindingsOutputPath.FullName}");
                 }
 
                 {
                     var outputCSharpFiles = Directory
-                        .EnumerateFiles(bindingsPath, "*.*", SearchOption.AllDirectories)
-                        .Where(s => csharpExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                        .EnumerateFiles(outputPaths.cSharpBindingsOutputPath.FullName, "*.*", SearchOption.AllDirectories)
+                        .Where(s => FileExtensions.csharpExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
                         .ToList();
                     var outputFileNames = String.Join(',', outputCSharpFiles.Select(filepath => Path.GetFileName(filepath)));
-                    Console.WriteLine($"Manually fixing a generation error on C# Bindings in:\n{outputFileNames} -> {bindingsPath}");
+                    Console.WriteLine($"Manually fixing a generation error on C# Bindings in:\n{outputFileNames} -> {outputPaths.cSharpBindingsOutputPath.FullName}");
 
                     CSharpBindingsFix.FixImplictCast(outputCSharpFiles);
                 }
@@ -154,8 +164,7 @@ namespace bindings_generator
             // In order to compile a native .dll that the generated C# bindings can pInvoke, the API needs to be exported to the DLL.
             // Therefore, the includes need new markup.
             {
-                string fixedIncludesBaseDir = Path.Join(outputPath.FullName, OutputSubdirectory_FixedCIncludes);
-                string fixedIncludeModuleDir = Path.Join(fixedIncludesBaseDir, treeSitterRepoPath.Name.Replace('-', '_'));
+                string fixedIncludeModuleDir = Path.Join(outputPaths.fixedCIncludesOutputPath.FullName, treeSitterRepoPath.Name.Replace('-', '_'));
 
                 var headFilenames = String.Join(',', paths.HeaderFiles.Select(filepath => Path.GetFileName(filepath)));
                 Console.WriteLine($"Adding DLLExport to C header files and writing them to the output directory:\n{headFilenames} -> {fixedIncludeModuleDir}");
@@ -187,7 +196,7 @@ namespace bindings_generator
                 {
                     var outputCHeaderFiles = Directory
                         .EnumerateFiles(fixedIncludeModuleDir, "*.*", SearchOption.AllDirectories)
-                        .Where(s => CCompilerPaths.cHeaderExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                        .Where(s => FileExtensions.cHeaderExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
                         .ToList();
 
                     CHeaderDllExporter.AddDllExportToCAPI(outputCHeaderFiles);
@@ -197,7 +206,7 @@ namespace bindings_generator
             return MainResult.Ok;
         }
 
-        static MainResult GenerateLanguageBindings(DirectoryInfo languageRepoPath, DirectoryInfo outputPath)
+        static MainResult GenerateLanguageBindings(DirectoryInfo languageRepoPath, OutputPaths outputPaths)
         {
             Console.WriteLine($"START: Generating bindings for Language repo {languageRepoPath.Name}");
 
@@ -311,8 +320,7 @@ namespace bindings_generator
                 {
                     string languageCModuleName = languageRepoPath.Name.Replace('-', '_');
 
-                    string generatedLanguageParserIncludesBaseDir = Path.Join(outputPath.FullName, OutputSubdirectory_FixedCIncludes);
-                    string generatedLanguageParserIncludesModuleDir = Path.Join(generatedLanguageParserIncludesBaseDir, languageCModuleName);
+                    string generatedLanguageParserIncludesModuleDir = Path.Join(outputPaths.fixedCIncludesOutputPath.FullName, languageCModuleName);
 
                     // Create OutputSubdirectory_FixedCIncludes
                     System.IO.Directory.CreateDirectory(generatedLanguageParserIncludesModuleDir);
@@ -363,13 +371,13 @@ namespace bindings_generator
             return MainResult.Ok;
         }
 
-        static MainResult GenerateBindings(DirectoryInfo reposPath, DirectoryInfo outputPath)
+        static MainResult GenerateBindings(InputPaths inputPaths, OutputPaths outputPaths)
         {
-            var repoPaths = Directory.EnumerateDirectories(reposPath.FullName).Select(path => new DirectoryInfo(path)).ToList();
+            var repoPaths = Directory.EnumerateDirectories(inputPaths.reposPath.FullName).Select(path => new DirectoryInfo(path)).ToList();
 
             if (!repoPaths.Any())
             {
-                Console.WriteLine($"ERROR: Failed to find any tree-sitter repositores at: \n{reposPath.FullName}");
+                Console.WriteLine($"ERROR: Failed to find any tree-sitter repositores at: \n{inputPaths.reposPath.FullName}");
                 return MainResult.TreeSitterRepoNotFound;
             }
 
@@ -377,18 +385,18 @@ namespace bindings_generator
             var treeSitterRepoDirectory = repoPaths.Find(dir => dir.Name == treeSitterRepoName);
             if (treeSitterRepoDirectory == null)
             {
-                Console.WriteLine($"ERROR: tree-sitter repository not found at: \n{reposPath.FullName}");
+                Console.WriteLine($"ERROR: tree-sitter repository not found at: \n{inputPaths.reposPath.FullName}");
                 return MainResult.TreeSitterRepoNotFound;
             }
 
             var languageDirectories = repoPaths.Where(dir => dir.Name != treeSitterRepoName).ToList();
             if (!languageDirectories.Any())
             {
-                Console.WriteLine($"ERROR: language repositories (e.g. tree-sitter-python) not found at: \n{reposPath.FullName}");
+                Console.WriteLine($"ERROR: language repositories (e.g. tree-sitter-python) not found at: \n{inputPaths.reposPath.FullName}");
                 return MainResult.AnyLanguageRepoNotFound;
             }
 
-            var treeSitterBindingrResult = GenerateTreeSitterBindings(treeSitterRepoDirectory, outputPath);
+            var treeSitterBindingrResult = GenerateTreeSitterBindings(treeSitterRepoDirectory, outputPaths);
             if (treeSitterBindingrResult != MainResult.Ok)
             {
                 return treeSitterBindingrResult;
@@ -396,7 +404,7 @@ namespace bindings_generator
 
             foreach( var languageDirectory in languageDirectories)
             {
-                var languageBindingResult = GenerateLanguageBindings(languageDirectory, outputPath);
+                var languageBindingResult = GenerateLanguageBindings(languageDirectory, outputPaths);
                 if (languageBindingResult != MainResult.Ok)
                 {
                     return languageBindingResult;
@@ -408,25 +416,33 @@ namespace bindings_generator
 
         static int Main(string[] args)
         {
-            var treeSitterReposPath = new Option<DirectoryInfo>(
+            var inputTreeSitterReposPath = new Option<DirectoryInfo>(
                 name: "--TreeSitterReposPath",
                 description: "The directory where the tree-sitter repository and any tree-sitter-<language> repositories have been downloaded.");
-            treeSitterReposPath.IsRequired = true;
+            inputTreeSitterReposPath.IsRequired = true;
 
-            var outputPath = new Option<DirectoryInfo>(
-                name: "--OutputPath",
+            var cSharpBindingsOutputPath = new Option<DirectoryInfo>(
+                name: "--CSharpBindingsOutputPath",
                 description: "The directory where the generated C# bindings and fixed C headers will be written.");
-            outputPath.IsRequired = true;
+            cSharpBindingsOutputPath.IsRequired = true;
+
+            var fixedCIncludesIncludePath = new Option<DirectoryInfo>(
+                name: "--CIncludesIncludeOutputPath",
+                description: "The directory where the generated C# bindings and fixed C headers will be written.");
+            fixedCIncludesIncludePath.IsRequired = true;
 
             var rootCommand = new RootCommand("Generates C# Bindings for Tree-Sitter library and Tree-Sitter Language Grammar libraries.");
-            rootCommand.AddOption(treeSitterReposPath);
-            rootCommand.AddOption(outputPath);
+            rootCommand.AddOption(inputTreeSitterReposPath);
+            rootCommand.AddOption(cSharpBindingsOutputPath);
+            rootCommand.AddOption(fixedCIncludesIncludePath);
 
-            rootCommand.SetHandler((treeSitterReposPath, outputPath) =>
+            rootCommand.SetHandler((treeSitterReposPath, cSharpBindingsOutputPath, fixedCIncludesIncludePath) =>
             {
-                GenerateBindings(treeSitterReposPath, outputPath);
+                InputPaths input = new InputPaths(treeSitterReposPath);
+                OutputPaths output = new OutputPaths(cSharpBindingsOutputPath, fixedCIncludesIncludePath);
+                GenerateBindings(input, output);
             },
-            treeSitterReposPath, outputPath);
+            inputTreeSitterReposPath, cSharpBindingsOutputPath, fixedCIncludesIncludePath);
 
             return rootCommand.InvokeAsync(args).Result;
         }

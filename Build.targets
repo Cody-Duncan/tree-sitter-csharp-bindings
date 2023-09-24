@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<PropertyGroup>
+    <!-- Where to put all the build outputs. This directory needs to be safe to completely clear on Clean. -->
+	<G_OutputDir>$(SolutionDir)out</G_OutputDir>
+    
+    <!-- Final Ouput for Libraries. This will contain all the generated .dll and .lib files that external projects should consume. Holds the output for tree_sitter.dll, tree_sitter_bindings.dll, and all the language binaries like tree_sitter_python.dll -->
+    <G_CSharpConfigSubPath>$(Platform)\$(Configuration)\$(TargetFramework)</G_CSharpConfigSubPath>
+    <G_CSharpBindingLibsOutputDir>$(G_OutputDir)\csharp_libs</G_CSharpBindingLibsOutputDir>
+
+    <G_FinalBindingsOutputDir>$(G_OutputDir)\final_libs\$(G_CSharpConfigSubPath)</G_FinalBindingsOutputDir>
+
+    <!-- Generated C# Bindings source files. Source files for tree-sitter-bindings.dll -->
+	<G_CSharpBindingSourceOutputDir>$(G_OutputDir)\generated_csharp_bindings_source</G_CSharpBindingSourceOutputDir>
+
+    <!-- Generated C header source files. These take the header files from the core tree-sitter library and add DllExports to the functions. Used to build tree_sitter.dll -->
+	<G_CHeaderOutputDir>$(G_OutputDir)\generated_c_dll_headers</G_CHeaderOutputDir>
+
+    <!-- Generated C libraries for languages source files. E.G. For Python, is the output for tree_sitter_python.dll -->
+    <G_CConfigSubpath>$(Platform)\$(Configuration)</G_CConfigSubpath>
+    <G_CLibsOutputDir>$(G_OutputDir)\c_libs</G_CLibsOutputDir>
+
+    <G_TreeSitterDllOutputDir>$(G_CLibsOutputDir)\tree_sitter\$(G_CConfigSubpath)</G_TreeSitterDllOutputDir>
+
+    <!-- Location in which to download the tree-sitter and language gramamr repositories -->
+    <G_TreeSitterDownloadReposDir>$(SolutionDir)downloads</G_TreeSitterDownloadReposDir>
+    <!-- Location of the tree-sitter repository -->
+    <G_TreeSitterRepoDir>$(G_TreeSitterDownloadReposDir)\tree-sitter</G_TreeSitterRepoDir>
+    <!-- Location of the tree-sitter source files -->
+    <G_TreeSitterSrcPath>$(G_TreeSitterRepoDir)\lib\src</G_TreeSitterSrcPath>
+    <!-- Location of the tree-sitter source files -->
+    <G_TreeSitterIncludesPath>$(G_TreeSitterRepoDir)\lib\include</G_TreeSitterIncludesPath>
+</PropertyGroup>
+
+</Project>

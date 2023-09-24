@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)Build.targets" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,27 +10,25 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>x64</Platforms>
-	<TreeSitterDllOutputDir>$(SolutionDir)out\libtree-sitter\$(Platform)\$(Configuration)\</TreeSitterDllOutputDir>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\tree-sitter-bindings\tree-sitter-bindings.csproj" />
-  </ItemGroup>
 
   <!--These linked files should copy into the output directory when building.-->
   <ItemGroup>
-	  <Content Include="$(TreeSitterDllOutputDir)tree_sitter.dll" Link="tree_sitter.dll">
+	  <Content Include="$(G_FinalBindingsOutputDir)\tree_sitter.dll" Link="tree_sitter.dll">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-    <Content Include="$(TreeSitterDllOutputDir)tree_sitter.exp" Link="tree_sitter.exp">
+    <Content Include="$(G_FinalBindingsOutputDir)tree_sitter.exp" Link="tree_sitter.exp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(TreeSitterDllOutputDir)tree_sitter.lib" Link="tree_sitter.lib">
+    <Content Include="$(G_FinalBindingsOutputDir)tree_sitter.lib" Link="tree_sitter.lib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(TreeSitterDllOutputDir)tree_sitter.pdb" Link="tree_sitter.pdb">
+    <Content Include="$(G_FinalBindingsOutputDir)tree_sitter.pdb" Link="tree_sitter.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)tree-sitter-bindings\TreeSitterBindings.csproj" />
   </ItemGroup>
 
 <!-- Old way of making sure the native dll's get put into the output directory -->

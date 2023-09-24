@@ -11,9 +11,7 @@ namespace bindings_generator
 {
     public class CCompilerPaths
     {
-        public static readonly string[] cHeaderExt = { "h", "hpp" };
-        public static readonly string[] cSourceExt = { "c", "cc" };
-        public static readonly string[] cLibraryExt = { "lib" };
+        
 
         /// <summary>
         /// Either Ok or an Error indicating a problem with assembling the path.
@@ -61,7 +59,7 @@ namespace bindings_generator
             
             var headerFiles = Directory
                 .EnumerateFiles(treeSitterIncludePath, "*.*", SearchOption.AllDirectories)
-                .Where(s => cHeaderExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                .Where(s => FileExtensions.cHeaderExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
                 .ToList();
             
             if (!headerFiles.Any())
@@ -101,7 +99,7 @@ namespace bindings_generator
             // Need to generate them from the source files.
             var sourceFiles = Directory
                 .EnumerateFiles(treeSitterIncludePath, "*.*", SearchOption.TopDirectoryOnly) // want only the parser.c and scanner.c, skip tree_sitter/
-                .Where(s => cSourceExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+                .Where(s => FileExtensions.cSourceExt.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
                 .ToList();
 
             if (!sourceFiles.Any())

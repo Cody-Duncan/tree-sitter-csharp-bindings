@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>tree_sitter_bindings</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+	<TreeSitterDllOutputDir>$(SolutionDir)out\libtree-sitter\$(Platform)\$(Configuration)\</TreeSitterDllOutputDir>
+	<BindingsDllOutputDir>$(SolutionDir)tree-sitter-bindings\bin\$(Platform)\$(Configuration)\net6.0\</BindingsDllOutputDir>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)Build.targets" />
+
+  <ItemGroup>
+    <Compile Include="$(G_CSharpBindingSourceOutputDir)\*.cs" LinkBase="generated_csharp_bindings_source" />
+  </ItemGroup>
+
+  <!-- <ItemGroup>
+    <Compile Include="$(G_CSharpBindingSourceOutputDir)\Std.cs" Link="Std.cs" />
+    <Compile Include="$(G_CSharpBindingSourceOutputDir)\tree_sitter.cs" Link="tree_sitter.cs" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <PackageReference Include="CppSharp.Runtime" Version="1.0.54.626" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<_LibTreeSitterBinaries Include="$(TreeSitterDllOutputDir)\*.*" />
+		<!-- These need to be named explicitly so it doesn't succeed by copying nothing. If it fails, it will retry in a sec.-->
+		<_BindingsBinaries Include="$(OutputDir)tree-sitter-bindings.deps.json;$(OutputDir)tree-sitter-bindings.dll;$(OutputDir)tree-sitter-bindings.pdb" />
+	</ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Message Text="Copying libtree-sitter Binaries from $(TreeSitterDllOutputDir) to output directory for deployment in external projects $(G_CSharpBindingLibsOutputDir)\$(G_CSharpConfigSubPath)" Importance="high" />
+	<Copy SourceFiles="@(_LibTreeSitterBinaries)" DestinationFolder="$(G_CSharpBindingLibsOutputDir)\$(G_CSharpConfigSubPath)" />
+	<Message Text="Copying tree-sitter-bindings Binaries from $(BindingsDllOutputDir) to output directory for deployment in external projects $(G_CSharpBindingLibsOutputDir)\$(G_CSharpConfigSubPath)" Importance="high" />
+	<!-- Somtimes the file system lags behind, and BindingsDllOutputDir isn't visible yet, so it doesn't copy anything. Retry in 1000ms-->
+	<Copy SourceFiles="@(_BindingsBinaries)" DestinationFolder="$(G_CSharpBindingLibsOutputDir)\$(G_CSharpConfigSubPath)" RetryDelayMilliseconds="1000" />
+  </Target>
+
+</Project>

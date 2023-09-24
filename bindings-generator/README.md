@@ -21,12 +21,13 @@ bindings-generator.exe $(SolutionDir)\tree-sitter $(SolutionDir)\out
 ```
 
 1. Reads the tree-sitter library for its `lib/include/tree-sitter` header files.  
-2. Generates C# bindings -> `$(SolutionDir)/out/csharp_bindings`
+2. Generates C# bindings -> `$(SolutionDir)/out/generated_csharp_bindings_source`
 3. Fixes the C# bindings. The generator creates an implicit cast that isn't allowed, so that gets patched.
 4. Copies the C Header files from   
 `$(SolutionDir)/tree-sitter/lib/include/tree-sitter`  
--> `$(SolutionDir)/out/tree_sitter_dll_includes/tree-sitter`
+-> `$(SolutionDir)/out/generated_c_dll_headers/tree_sitter`
 5. Adds `__declspec(dllexport)` to all the C API functions in the copied headers.
+$TODO: Add update about the headers for the language libraries.
 
 And Done!
 

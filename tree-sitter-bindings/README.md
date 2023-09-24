@@ -18,11 +18,11 @@ There's nothing in this directory because all the source files are linked to ext
 1. Builds `tree-sitter-bindings.dll` -> `$(SolutionDir)\tree-sitter-bindings\bin\$(Platform)\$(Configuration)\net6.0\`
 
 1. **Post-Build** - copies `tree_sitter.dll` from `libtree-sitter` project, and the compiled `tree-sitter-bindings.dll` into ->  
-`$(SolutionDir)\out\binding_libs\$(Platform)\$(Configuration)\net6.0\` for deployment to external projects.
+`$(SolutionDir)\out\tree_sitter_csharp_bindings_libs\$(Platform)\$(Configuration)\net6.0\` for deployment to external projects.
 
 ## Next Solution Build Steps
 
-### $(SolutionDir)/out/binding_libs
+### $(SolutionDir)/out/tree_sitter_csharp_bindings_libs
 
 This is the location that `tree_sitter.dll` and `tree-sitter-bindings.dll` are copied into as outputs of this project.
 

@@ -8,7 +8,7 @@ There's nothing in this directory because all the source files are linked to ext
 
 - *See* `bindings-generator` for the prebuiild step that runs `download_tree_sitter_repo.ps1` to download the tree-sitter repository.
 
-**Include Files**: linked to `$(SolutionDir)/out/tree_sitter_dll_includes`. This contains modified copies of the headers from tree-sitter's `lib/include`, with the addition that all C API functions are marked with `__declspec(dllexport)`.
+**Include Files**: linked to `$(SolutionDir)/out/generated_c_dll_headers`. This contains modified copies of the headers from tree-sitter's `lib/include`, with the addition that all C API functions are marked with `__declspec(dllexport)`.
 
 - *See* `bindings-generator` for how these headers are copied from the tree-sitter library and modified.
 
