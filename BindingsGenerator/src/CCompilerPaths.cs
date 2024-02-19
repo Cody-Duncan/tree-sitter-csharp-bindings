@@ -68,7 +68,7 @@ namespace bindings_generator
             }
 
             CCompilerPaths paths = new CCompilerPaths();
-            paths.m_moduleName = treeSitterRepoPath.Name.Replace('-', '_'); // can't have '-' in module name
+            paths.m_moduleName = LanguageSourcePaths.GetModuleNameFromRepoPath(treeSitterRepoPath);
             paths.m_pathError = PathError.Ok();
             paths.m_repoPath = treeSitterRepoPath.FullName;
             paths.m_includePath = treeSitterIncludePath;
@@ -108,7 +108,7 @@ namespace bindings_generator
             }
 
             CCompilerPaths paths = new CCompilerPaths();
-            paths.m_moduleName = languageRepoPath.Name.Replace('-', '_'); // can't have '-' in module name
+            paths.m_moduleName = LanguageSourcePaths.GetModuleNameFromRepoPath(languageRepoPath);
             paths.m_pathError = PathError.Ok();
             paths.m_repoPath = languageRepoPath.FullName;
             paths.m_includePath = treeSitterIncludePath;
@@ -134,7 +134,7 @@ namespace bindings_generator
             }
 
             CCompilerPaths paths = new CCompilerPaths();
-            paths.m_moduleName = languageHeaderPath.Name.Replace('-', '_'); // can't have '-' in module name
+            paths.m_moduleName = LanguageSourcePaths.GetModuleNameFromRepoPath(languageHeaderPath);
             paths.m_pathError = PathError.Ok();
             paths.m_repoPath = languageHeaderPath.FullName;
             paths.m_includePath = languageHeaderPath.FullName;

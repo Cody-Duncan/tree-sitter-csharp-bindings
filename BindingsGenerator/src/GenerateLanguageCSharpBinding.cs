@@ -58,10 +58,10 @@ namespace REPLACE_module_name
 
             string cSharpHeaderText = csharpBindingContent.Replace(moduleNameMarkerSnakeCase, moduleNamespace).Replace(moduleNameMarkerTitleCase, moduleFunctionName);
 
-            string sSharpFileName = moduleName + ".cs";
-            string cSharpFilepath = Path.Join(outputDir, sSharpFileName);
+            string cSharpFileName = moduleName + ".cs";
+            string cSharpFilepath = Path.Join(outputDir, cSharpFileName);
 
-            Console.WriteLine($"Generating C# binding {sSharpFileName} for module {moduleNamespace} into {outputDir}");
+            Console.WriteLine($"Generating C# binding {cSharpFileName} for module {moduleNamespace} into {outputDir}");
             File.WriteAllText(cSharpFilepath, cSharpHeaderText);
         }
     }

@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "bindings-generator": {
-      "commandName": "Project",
-      "commandLineArgs": "--TreeSitterReposPath $(G_TreeSitterDownloadReposDir) --CSharpBindingsOutputPath $(G_CSharpBindingSourceOutputDir) --CIncludesIncludeOutputPath $(G_CHeaderOutputDir)",
-      "workingDirectory": "$(ProjectDir)"
-    }
-  }
-}

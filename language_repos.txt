@@ -1,7 +1,0 @@
-# This file specifies which tree-sitter repositories to download
-# Format is CSV with # comments
-#	repository_url,version_tag
-# DO NOT CHANGE NEXT LINE. always need tree-sitter itself.
-https://github.com/tree-sitter/tree-sitter.git,v0.20.8
-# Languages
-https://github.com/tree-sitter/tree-sitter-python.git

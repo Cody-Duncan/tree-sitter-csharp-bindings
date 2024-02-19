@@ -1,16 +1,11 @@
 
 ## Output Directory for generated bindings
-out/
-!out/hold.txt
+GeneratedCHeaders/
+GeneratedCSharpBindings/
+GeneratedCSharpTestProgram/
 
-## Directory for downloaded repositories, e.g. tree-sitter and tree-sitter-python
-downloads/
-
-## A download of the tree-sitter repository. Just need this for a few files. Doesn't need tracking.
-tree-sitter/
-
-# Created by https://www.toptal.com/developers/gitignore/api/c++,csharp,visualstudio,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=c++,csharp,visualstudio,visualstudiocode
+## Cmake build directories
+build/
 
 ### C++ ###
 # Prerequisites
@@ -444,5 +439,3 @@ FodyWeavers.xsd
 # Ignore all local history of files
 .history
 .ionide
-
-# End of https://www.toptal.com/developers/gitignore/api/c++,csharp,visualstudio,visualstudiocode
