@@ -1,3 +1,11 @@
+# Archived
+
+This repository has been archived, and is no longer maintained.
+
+Use this <https://github.com/tree-sitter/csharp-tree-sitter>.  
+That repository officially supports C# bindings to tree-sitter libraries.  
+
+
 # tree-sitter-csharp-bindings
 
 Generates C# Bindings for [Tree-Sitter](https://github.com/tree-sitter/tree-sitter).  
